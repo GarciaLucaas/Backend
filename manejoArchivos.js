@@ -1,4 +1,7 @@
 const fs = require('fs');
+fs.writeFileSync("manejo1.txt")
+const express = require ('express');
+const app = express();
 
 class Contenedor{
     // save() {
@@ -7,30 +10,47 @@ class Contenedor{
     //         console.log(contenido);
     //     })
     // }
-    getById = (id) =>{
+    getById = async(id) =>{
         let leer = fs.readFileSync("manejo1.txt","utf-8")
         let objetosLeidos = JSON.parse(leer)
         const result = objetosLeidos.filter(obj => obj.id == id);
         console.log(result[0])
-        console.log(leer);
     }
-    getAll = () =>{
+    getAll = async() =>{
         let leer = fs.readFileSync("manejo1.txt","utf-8")
         let objetosLeidos = JSON.parse(leer)
         console.log(objetosLeidos)
     }
 
-    deleteById = (idEliminar) =>{
+    deleteById =async(idEliminar) =>{
         let leer = fs.readFileSync("manejo1.txt","utf-8")
         let objetosLeidos = JSON.parse(leer)
         let nuevaLista = objetosLeidos.filter((item) => item.id !== idEliminar)
         fs.writeFileSync("manejo1.txt",JSON.stringify(nuevaLista))
     }
 
-    deleteAll = ()=>{
+    deleteAll = async()=>{
         let leer = fs.readFileSync("manejo1.txt","utf-8")
         let objetosLeidos = JSON.parse(leer)
         fs.writeFileSync("manejo1.txt",JSON.stringify([]))
     }
 }
 const producto = new Contenedor("Regla")
+
+
+let leer = fs.readFileSync("manejo1.txt","utf-8")
+let objetosLeidos = JSON.parse(leer)
+
+app.get('/productos', async(req, res)=>{
+    const pro = await producto.getAll()
+    res.send(pro)
+})
+
+app.get('/productosRandom', async(req, res)=>{
+    const pro = await producto.getAll()
+    const random = parseInt(Math.random()* pro.length)
+    res.send(pro[random])
+})
+const PORT = 3000;
+
+app.listen(PORT, ()=> console.log(`http://localhost:${PORT}`));
